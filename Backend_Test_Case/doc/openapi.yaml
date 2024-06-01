@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: Backend Test Case API
+  version: 1.0.0
+  description: PT. Eigen Trimathema backend test case API using Express.js
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local server
+
+paths:
+  /books:
+    get:
+      tags:
+        - "Books"
+      summary: Get all books
+      responses:
+        200:
+          description: Success get all books
+        500:
+          description: Server error
+  
+  /members:
+    get:
+      tags:
+        - "Members"
+      summary: Get all members
+      responses:
+        200:
+          description: Success get all members
+        500:
+          description: Server error
+  
+  /borrow/{member_code}/{book_code}:
+    post:
+      tags:
+        - "Borrow"
+      summary: Member borrow books
+      parameters:
+        - name: member_code
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: book_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success borrow book
+        400:
+          description: Member cannot borrow more than 2 books
+        404:
+          description: Book not available
+        500:
+          description: Server error
+  
+  /return/{member_code}/{book_code}:
+    post:
+      tags:
+        - "Return"
+      summary: Member return books
+      parameters:
+        - name: member_code
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: book_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success return book
+        404:
+          description: Borrowed book not found
+        500:
+          description: Server error

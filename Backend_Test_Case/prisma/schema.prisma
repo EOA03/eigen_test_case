@@ -1,0 +1,52 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+model Books {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique
+  title       String
+  author      String
+  stock       Int
+  borrowed    BorrowedBooks[]
+
+  @@index([code], name: "idx_books_code")
+}
+
+model Member {
+  id                Int             @id @default(autoincrement())
+  code              String          @unique
+  name              String
+  status            MemberStatus    @default(ACTIVE)
+  penalty_end_date  DateTime?
+  total_books       Int?
+  books             BorrowedBooks[]
+
+  @@index([code], name: "idx_member_code")
+}
+
+enum MemberStatus {
+  ACTIVE
+  PENALTY
+}
+
+model BorrowedBooks {
+  id                Int         @id @default(autoincrement())
+  member_code       String
+  book_code         String
+  borrow_date       DateTime    @default(now())
+  return_date       DateTime?
+  returned_yet      Boolean     @default(false)
+
+  member            Member      @relation(fields: [member_code], references: [code], onDelete: Cascade)
+  book              Books       @relation(fields: [book_code], references: [code], onDelete: Cascade)
+
+  @@index([member_code], name: "idx_borrowedbook_member")
+}
